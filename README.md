@@ -1,4 +1,4 @@
-# ONJ-project
+# ONJ: Aspect-based sentiment analysis
 
 ## Introduction
 
