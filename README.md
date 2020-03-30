@@ -1,7 +1,7 @@
 # ONJ-project
 
-# Introduction
+## Introduction
 
-# existing solutions
+## existing solutions
 
-# Initial ideas
+## Initial ideas
