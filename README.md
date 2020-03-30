@@ -1,7 +1,7 @@
 # ONJ: Aspect-based sentiment analysis
 
 ## Introduction
-Za seminarsko nalogo sva se odločila izbrati temo "Aspect-based sentiment analysis". Najprej sva pogledala podan nabor podatkov ("Slovene corpus for aspect-based sentiment analysis - SentiCoref 1.0", url:https://www.clarin.si/repository/xmlui/handle/11356/1285) in si ga razložila. Ugotovila sva, da so podatki anotirani in združeni v entitete, katere imajo ob azdnji pojavitvi določen sentiment.
+Za seminarsko nalogo sva se odločila izbrati temo "Aspect-based sentiment analysis". Najprej sva pogledala podan nabor podatkov ("Slovene corpus for aspect-based sentiment analysis - SentiCoref 1.0", url:https://www.clarin.si/repository/xmlui/handle/11356/1285) in si ga razložila. Ugotovila sva, da so podatki anotirani in združeni v entitete, katere imajo ob zadnji pojavitvi določen sentiment.
 
 ## Existing solutions
 
