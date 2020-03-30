@@ -2,6 +2,6 @@
 
 ## Introduction
 
-## existing solutions
+## Existing solutions
 
 ## Initial ideas
