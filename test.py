@@ -10,7 +10,7 @@ import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
@@ -30,7 +30,10 @@ def elmo_vectors(x):
 #load data
 data = np.load("data.npy", allow_pickle=True)
 data = np.delete(data, (0), axis=0)
+data = data[data[:,4] != None] #removing None sentiments
 data = pd.DataFrame(data)
+print(data.shape)
+data = data[0:1000]
 
 #sentiment distribution
 print(data[4].value_counts(normalize = True))
@@ -47,26 +50,26 @@ data[5] = data[5].apply(lambda x: [' '.join(s.split()) for s in x])
 train, test = train_test_split(data, test_size=0.2, random_state=42)
 
 print("elmo is eating his cookie...")
-# split vector into embedings for speed
-list_train = [train[i:i+100] for i in range(0,train.shape[0],100)]
-list_test = [test[i:i+100] for i in range(0,test.shape[0],100)]
-# Extract ELMo embeddings
-elmo_train = [elmo_vectors(x[5]) for x in list_train]
-elmo_test = [elmo_vectors(x[5]) for x in list_test]
-#join them back together
-elmo_train_new = np.concatenate(elmo_train, axis = 0)
-elmo_test_new = np.concatenate(elmo_test, axis = 0)
-print("done")
 
-
-# save elmo_train_new
-pickle_out = open("elmo_train_26042020.pickle","wb")
-pickle.dump(elmo_train_new, pickle_out)
-pickle_out.close()
-# save elmo_test_new
-pickle_out = open("elmo_test_26042020.pickle","wb")
-pickle.dump(elmo_test_new, pickle_out)
-pickle_out.close()
+# # split vector into embedings for speed
+# list_train = [train[i:i+100] for i in range(0,train.shape[0],100)]
+# list_test = [test[i:i+100] for i in range(0,test.shape[0],100)]
+# # Extract ELMo embeddings
+# elmo_train = [elmo_vectors(x[5]) for x in list_train]
+# elmo_test = [elmo_vectors(x[5]) for x in list_test]
+# #join them back together
+# elmo_train_new = np.concatenate(elmo_train, axis = 0)
+# elmo_test_new = np.concatenate(elmo_test, axis = 0)
+# print("done")
+#
+# # save elmo_train_new
+# pickle_out = open("elmo_train_26042020.pickle","wb")
+# pickle.dump(elmo_train_new, pickle_out)
+# pickle_out.close()
+# # save elmo_test_new
+# pickle_out = open("elmo_test_26042020.pickle","wb")
+# pickle.dump(elmo_test_new, pickle_out)
+# pickle_out.close()
 
 # load elmo_train_new
 pickle_in = open("elmo_train_26042020.pickle", "rb")
@@ -80,14 +83,17 @@ xtrain, xvalid, ytrain, yvalid = train_test_split(elmo_train_new, train[4],  ran
 
 #training logistinc regresion
 print("training log reg...")
-lreg = LogisticRegression()
+lreg = LogisticRegression(multi_class='auto')
 lreg.fit(xtrain, ytrain)
 print("done")
 
 #predict
 preds_valid = lreg.predict(xvalid)
-print(f1_score(yvalid, preds_valid))
+print(f1_score(yvalid.values, preds_valid, average='micro'))
 
 # make predictions on test set
 preds_test = lreg.predict(elmo_test_new)
-print(f1_score(test[4], preds_test))
+print(f1_score(test[4], preds_test, average='micro'))
+
+#test accuracy
+print(accuracy_score(test[4], preds_test))
