@@ -35,7 +35,7 @@ def GetSentimentIfHasIt(line):
 
     return False
 
-file1 = open("data_v2.txt","w")
+file1 = open("data/data_v2.txt", "w")
 allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before"])
 file1.write(np.array2string(allData) + "\n")
 
@@ -123,6 +123,6 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
         #print()
         #print(allData.shape)
 
-np.save('data_v2.npy', allData)
+np.save('data/data_v2.npy', allData)
 
 file1.close()
