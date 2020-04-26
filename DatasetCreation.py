@@ -3,7 +3,7 @@ import numpy as np
 import sys
 
 import nltk
-from nltk.corpus import state_union
+from nltk.corpus import state_union, stopwords
 from nltk.tokenize import PunktSentenceTokenizer, sent_tokenize
 
 # stop wordi stran
@@ -54,6 +54,8 @@ def GetCorrectSentance(allSentances, characterLocation):
             return sentance[1]
 
 
+stop_words = set(stopwords.words('slovene'))
+
 file1 = open("data_v3.txt","w")
 allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before", "Sentances"])
 file1.write(np.array2string(allData) + "\n")
@@ -83,7 +85,13 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
                         end = start + len(sent) + add
                         #print(start, end, sent)
 
-                        all_sentances.append(([start, end], sent))
+                        filtered_sentence = []
+
+                        for w in sent.split(" "):
+                            if w not in stop_words:
+                                filtered_sentence.append(w)
+
+                        all_sentances.append(([start, end], ' '.join(filtered_sentence)))
 
                         start = end + 1
 
@@ -130,7 +138,7 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
                         entitiesInFile[currentEntityId][3].add(word)
 
                         if len(wordsBack) > 0:
-                            entitiesInFile[currentEntityId][5] = [wordsBack.copy()]
+                            entitiesInFile[currentEntityId][5] = wordsBack.copy()
 
                         sentiment = GetSentimentIfHasIt(line)
                         if sentiment:
