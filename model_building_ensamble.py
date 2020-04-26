@@ -24,7 +24,6 @@ print("done")
 
 def elmo_vectors(x):
     # x = x.values #list of sentences
-    print(x)
     embeddings = elmo(x, signature="default", as_dict=True)["elmo"]
 
     with tf.Session() as sess:
@@ -32,8 +31,6 @@ def elmo_vectors(x):
         sess.run(tf.tables_initializer())
         # return average of ELMo features
         return sess.run(tf.reduce_mean(embeddings,1))
-
-    return elmo_vectors
 
 def load_preprocess_data(limit=None):
     #load data
@@ -61,20 +58,14 @@ def load_preprocess_data(limit=None):
     #expand words-before into multiple rows (every sentence in new row)
     train_new = [] #list of rows
     for i, vrstica in train.iterrows():
-        if any(isinstance(el, list) for el in vrstica[5]):
-            for stavek in vrstica[5]:
-                train_new.append([vrstica[0]+"-"+vrstica[1], ' '.join(stavek), vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
-        else:
-            train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
+        for stavek in vrstica[6]:
+                train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, sentence,  sentiment
     train_new = pd.DataFrame(train_new)
 
     test_new = [] #list of rows
     for i, vrstica in test.iterrows():
-        if any(isinstance(el, list) for el in vrstica[5]):
-            for stavek in vrstica[5]:
-                test_new.append([vrstica[0] + "-" + vrstica[1], ' '.join(stavek), vrstica[4]])  # doc-ent-id, stavek-from-before,  sentiment
-        else:
-            test_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
+        for stavek in vrstica[6]:
+            test_new.append([vrstica[0] + "-" + vrstica[1], stavek, vrstica[4]])  # doc-ent-id, sentence,  sentiment
     test_new = pd.DataFrame(test_new)
 
     return train_new, test_new
@@ -176,7 +167,7 @@ def fit_models(elmo_train_new, train, elmo_test_new, test):
 
 
 #-------MAIN------
-train, test = load_preprocess_data(200)
+train, test = load_preprocess_data()
 
 # upsample minority class in train set
 train = upsample_minority(train)
@@ -185,6 +176,8 @@ print(train[2].value_counts(normalize=True))
 #makeelmo embedings
 make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
+
+#fit models
 fit_models(elmo_train_new, train, elmo_test_new, test)
 
 
