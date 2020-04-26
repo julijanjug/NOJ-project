@@ -13,8 +13,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from scipy import stats as s
+from sklearn.utils import resample
 
-#This file processes data that has formated words before as list of lists
+#This file processes data that has formated words before as list of lists and makes elmo vector for each sentence.
+# Then predists every sentence and takes the most frequent prediction
+
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
 print("done")
@@ -34,7 +37,7 @@ def elmo_vectors(x):
 
 def load_preprocess_data(limit=None):
     #load data
-    data = np.load("data/data_v2.npy", allow_pickle=True)
+    data = np.load("data/data_v3.npy", allow_pickle=True)
     data = np.delete(data, (0), axis=0)
     data = data[data[:,4] != None]  #removing None sentiments
     data[:,4] = np.where(data[:,4] == '5', '4', data[:,4]) #change class 5->4
@@ -76,9 +79,9 @@ def load_preprocess_data(limit=None):
     return train_new, test_new
 
 def upsample_minority(df):
-    df_majority = df.loc[df[4] == '3']
-    df_minority_2 = df.loc[df[4] == '2']
-    df_minority_4 = df.loc[df[4] == '4']
+    df_majority = df.loc[df[2] == '3']
+    df_minority_2 = df.loc[df[2] == '2']
+    df_minority_4 = df.loc[df[2] == '4']
     df_minority = pd.concat([df_minority_2, df_minority_4])
 
     df_minority_upsampled = resample(df_minority,
@@ -103,20 +106,20 @@ def make_elmo_embeddings(train, test):
     print("done")
 
     # save elmo_train_new
-    pickle_out = open("elmo_embeddings/elmo_train_list_3k.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_train_v3.pickle", "wb")
     pickle.dump(elmo_train_new, pickle_out)
     pickle_out.close()
     # save elmo_test_new
-    pickle_out = open("elmo_embeddings/elmo_test_list_3k.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_test_v3.pickle", "wb")
     pickle.dump(elmo_test_new, pickle_out)
     pickle_out.close()
 
 def load_elmo_embeddings():
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_train_list_3k.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_train_v3.pickle", "rb")
     elmo_train_new = pickle.load(pickle_in)
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_test_list_3k.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_test_v3.pickle", "rb")
     elmo_test_new = pickle.load(pickle_in)
     return elmo_train_new, elmo_test_new
 
@@ -145,7 +148,6 @@ def format_test_sets(test, preds):
 
 
 def fit_models(elmo_train_new, train, elmo_test_new, test):
-
     #training logistinc regresion
     print("training log reg...")
     lreg = LogisticRegression(multi_class='multinomial', solver='lbfgs', dual=False, max_iter=1000)
@@ -173,11 +175,11 @@ def fit_models(elmo_train_new, train, elmo_test_new, test):
 
 
 #-------MAIN------
-train, test = load_preprocess_data(2000)
+train, test = load_preprocess_data(200)
 
 # upsample minority class in train set
 train = upsample_minority(train)
-print(train[4].value_counts(normalize=True))
+print(train[2].value_counts(normalize=True))
 
 #makeelmo embedings
 make_elmo_embeddings(train, test)

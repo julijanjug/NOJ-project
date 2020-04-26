@@ -14,6 +14,8 @@ from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, recall_s
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import resample
 
+#naredi elmo vector za words_before združene z presledki kr za vse stavke ki so povezani s to entitetio en vector
+
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
 print("done")
@@ -21,6 +23,7 @@ print("done")
 def elmo_vectors(x):
     x = x.values
     x = [' '.join(i) for i in x]
+    print(x)
     embeddings = elmo(x, signature="default", as_dict=True)["elmo"]
 
     with tf.Session() as sess:
@@ -135,9 +138,11 @@ def fit_log_reg(elmo_train_new, train, elmo_test_new, test):
 
 #-------MAIN------
 train, test = load_preprocess_data(800)
+
 # upsample minority class in train dataset
 train = upsample_minority(train)
 print(train[4].value_counts(normalize=True))
+
 # make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 fit_log_reg(elmo_train_new, train, elmo_test_new, test)
