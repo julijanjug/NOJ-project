@@ -32,8 +32,10 @@ def load_preprocess_data(limit=None):
     #load data
     data = np.load("data.npy", allow_pickle=True)
     data = np.delete(data, (0), axis=0)
-    data = data[data[:,4] != None] #removing None sentiments
-    
+    data = data[data[:,4] != None]  #removing None sentiments
+    data[:,4] = np.where(data[:,4] == '5', '4', data[:,4]) #change 5->4
+    data[:,4] = np.where(data[:,4] == '1', '2', data[:,4]) #change 1->2
+
     data = pd.DataFrame(data)
     print(data.shape)
     if limit != None:
