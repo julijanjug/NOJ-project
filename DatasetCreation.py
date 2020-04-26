@@ -1,7 +1,7 @@
 import glob
 import numpy as np
 
-NUM_WORDS_BACK = 3
+NUM_WORDS_BACK = 5
 STOP_WORDS = [".", "!", "?", "..."]
 LOCILA = [".", "!", "?", "...", ",", ";", ":", "-", "–", "\"", "(", ")", "\\", "/", "[", "]", "{", "}", "@", "”", "…", "•"]
 
@@ -35,7 +35,7 @@ def GetSentimentIfHasIt(line):
 
     return False
 
-file1 = open("data.txt","w")
+file1 = open("data_v2.txt","w")
 allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before"])
 file1.write(np.array2string(allData) + "\n")
 
@@ -72,7 +72,11 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
 
                         if workingEntityId != currentEntityId:
                             workingEntityId = currentEntityId
-                            entitiesInFile[currentEntityId][5].extend(wordsBack)
+
+                            if entitiesInFile[currentEntityId][5] is None:
+                                entitiesInFile[currentEntityId][5] = wordsBack.copy()
+                            else:
+                                entitiesInFile[currentEntityId][5].append(wordsBack.copy())
 
                         sentiment = GetSentimentIfHasIt(line)
                         if sentiment:
@@ -86,8 +90,11 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
                     # If new entity
                     else:
                         # filename, entity id, entity words, sentiment, words before entity
-                        entitiesInFile[currentEntityId] = [fileName, currentEntityId, None, set(), None, wordsBack.copy()]
+                        entitiesInFile[currentEntityId] = [fileName, currentEntityId, None, set(), None, None]
                         entitiesInFile[currentEntityId][3].add(word)
+
+                        if len(wordsBack) > 0:
+                            entitiesInFile[currentEntityId][5] = [wordsBack.copy()]
 
                         sentiment = GetSentimentIfHasIt(line)
                         if sentiment:
@@ -116,6 +123,6 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
         #print()
         #print(allData.shape)
 
-np.save('data.npy', allData)
+np.save('data_v2.npy', allData)
 
 file1.close()
