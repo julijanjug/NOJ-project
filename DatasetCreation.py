@@ -137,11 +137,11 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
                     # If new entity
                     else:
                         # filename, entity id, entity words, sentiment, words before entity
-                        entitiesInFile[currentEntityId] = [fileName, currentEntityId, None, set(), None, None, [GetCorrectSentance(all_sentances, GetWordFirstCharacterLocation(line))]]
+                        entitiesInFile[currentEntityId] = [fileName, currentEntityId, None, set(), None, [], [GetCorrectSentance(all_sentances, GetWordFirstCharacterLocation(line))]]
                         entitiesInFile[currentEntityId][3].add(word)
 
                         if len(wordsBack) > 0:
-                            entitiesInFile[currentEntityId][5] = wordsBack.copy()
+                            entitiesInFile[currentEntityId][5].append(wordsBack.copy())
 
                         sentiment = GetSentimentIfHasIt(line)
                         if sentiment:
