@@ -75,6 +75,20 @@ def load_preprocess_data(limit=None):
 
     return train_new, test_new
 
+def upsample_minority(df):
+    df_majority = df.loc[df[4] == '3']
+    df_minority_2 = df.loc[df[4] == '2']
+    df_minority_4 = df.loc[df[4] == '4']
+    df_minority = pd.concat([df_minority_2, df_minority_4])
+
+    df_minority_upsampled = resample(df_minority,
+                                     replace=True,  # sample with replacement
+                                     n_samples=len(df_majority),  # to match majority class
+                                     random_state=42)  # reproducible results
+
+    df_upsampled = pd.concat([df_majority, df_minority_upsampled])
+    return df_upsampled
+
 def make_elmo_embeddings(train, test):
     print("elmo is eating his cookie...")
     # split vector into embedings for speed
@@ -160,6 +174,12 @@ def fit_models(elmo_train_new, train, elmo_test_new, test):
 
 #-------MAIN------
 train, test = load_preprocess_data(2000)
+
+# upsample minority class in train set
+train = upsample_minority(train)
+print(train[4].value_counts(normalize=True))
+
+#makeelmo embedings
 make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 fit_models(elmo_train_new, train, elmo_test_new, test)

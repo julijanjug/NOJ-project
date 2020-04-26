@@ -58,7 +58,7 @@ def GetCorrectSentance(allSentances, characterLocation):
 lemmatizer = Lemmatizer(dictionary=lemmagen.DICTIONARY_SLOVENE)
 stop_words = set(stopwords.words('slovene'))
 
-file1 = open("data_v3.txt","w")
+file1 = open("data/data_v3.txt", "w")
 allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before", "Sentances"])
 file1.write(np.array2string(allData) + "\n")
 
@@ -170,6 +170,6 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
         #print()
         #print(allData.shape)
 
-np.save('data_v3.npy', allData)
+np.save('data/data_v3.npy', allData)
 
 file1.close()

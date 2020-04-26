@@ -55,12 +55,6 @@ def load_preprocess_data(limit=None):
     #train test split
     train, test = train_test_split(data, test_size=0.2, random_state=42)
 
-    # upsample minority class in train dataset
-    print(train.shape)
-    train = upsample_minority(train)
-    print(train[4].value_counts(normalize=True))
-    print(train.shape)
-
     return train, test
 
 def make_elmo_embeddings(train, test):
@@ -141,6 +135,9 @@ def fit_log_reg(elmo_train_new, train, elmo_test_new, test):
 
 #-------MAIN------
 train, test = load_preprocess_data(800)
+# upsample minority class in train dataset
+train = upsample_minority(train)
+print(train[4].value_counts(normalize=True))
 # make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 fit_log_reg(elmo_train_new, train, elmo_test_new, test)
