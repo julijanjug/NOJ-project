@@ -24,7 +24,6 @@ print("done")
 
 def elmo_vectors(x):
     # x = x.values #list of sentences
-    print(x)
     embeddings = elmo(x, signature="default", as_dict=True)["elmo"]
 
     with tf.Session() as sess:
@@ -32,8 +31,6 @@ def elmo_vectors(x):
         sess.run(tf.tables_initializer())
         # return average of ELMo features
         return sess.run(tf.reduce_mean(embeddings,1))
-
-    return elmo_vectors
 
 def load_preprocess_data(limit=None):
     #load data
@@ -175,7 +172,7 @@ def fit_models(elmo_train_new, train, elmo_test_new, test):
 
 
 #-------MAIN------
-train, test = load_preprocess_data(200)
+train, test = load_preprocess_data()
 
 # upsample minority class in train set
 train = upsample_minority(train)
@@ -184,6 +181,8 @@ print(train[2].value_counts(normalize=True))
 #makeelmo embedings
 make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
+
+#fit models
 fit_models(elmo_train_new, train, elmo_test_new, test)
 
 
