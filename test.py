@@ -33,7 +33,7 @@ data = np.delete(data, (0), axis=0)
 data = data[data[:,4] != None] #removing None sentiments
 data = pd.DataFrame(data)
 print(data.shape)
-data = data[0:1000]
+# data = data[0:1000]
 
 #sentiment distribution
 print(data[4].value_counts(normalize = True))
