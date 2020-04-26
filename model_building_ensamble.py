@@ -67,6 +67,7 @@ def load_preprocess_data(limit=None):
         else:
             train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
     train_new = pd.DataFrame(train_new)
+
     test_new = [] #list of rows
     for i, vrstica in test.iterrows():
         if any(isinstance(el, list) for el in vrstica[5]):
@@ -106,20 +107,20 @@ def make_elmo_embeddings(train, test):
     print("done")
 
     # save elmo_train_new
-    pickle_out = open("elmo_embeddings/elmo_train_v3.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_train_v4_Jaka.pickle", "wb")
     pickle.dump(elmo_train_new, pickle_out)
     pickle_out.close()
     # save elmo_test_new
-    pickle_out = open("elmo_embeddings/elmo_test_v3.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_test_v4_Jaka.pickle", "wb")
     pickle.dump(elmo_test_new, pickle_out)
     pickle_out.close()
 
 def load_elmo_embeddings():
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_train_v3.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_train_v4_Jaka.pickle", "rb")
     elmo_train_new = pickle.load(pickle_in)
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_test_v3.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_test_v4_Jaka.pickle", "rb")
     elmo_test_new = pickle.load(pickle_in)
     return elmo_train_new, elmo_test_new
 
