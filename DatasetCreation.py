@@ -1,10 +1,12 @@
 import glob
 import numpy as np
 import sys
-
 import nltk
 from nltk.corpus import state_union, stopwords
 from nltk.tokenize import PunktSentenceTokenizer, sent_tokenize
+import lemmagen.lemmatizer
+from lemmagen.lemmatizer import Lemmatizer
+
 
 # stop wordi stran
 # lematizacija
@@ -53,7 +55,7 @@ def GetCorrectSentance(allSentances, characterLocation):
         if sentance[0][0] <= characterLocation <= sentance[0][1]:
             return sentance[1]
 
-
+lemmatizer = Lemmatizer(dictionary=lemmagen.DICTIONARY_SLOVENE)
 stop_words = set(stopwords.words('slovene'))
 
 file1 = open("data_v3.txt","w")
@@ -89,6 +91,7 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
 
                         for w in sent.split(" "):
                             if w not in stop_words:
+                                w = lemmatizer.lemmatize(w)
                                 filtered_sentence.append(w)
 
                         all_sentances.append(([start, end], ' '.join(filtered_sentence)))
