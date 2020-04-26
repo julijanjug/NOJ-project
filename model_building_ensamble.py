@@ -58,19 +58,13 @@ def load_preprocess_data(limit=None):
     #expand words-before into multiple rows (every sentence in new row)
     train_new = [] #list of rows
     for i, vrstica in train.iterrows():
-        if any(isinstance(el, list) for el in vrstica[5]):
-            for stavek in vrstica[5]:
-                train_new.append([vrstica[0]+"-"+vrstica[1], ' '.join(stavek), vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
-        else:
-            train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
+        for stavek in vrstica[6]:
+                train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, sentence,  sentiment
     train_new = pd.DataFrame(train_new)
     test_new = [] #list of rows
     for i, vrstica in test.iterrows():
-        if any(isinstance(el, list) for el in vrstica[5]):
-            for stavek in vrstica[5]:
-                test_new.append([vrstica[0] + "-" + vrstica[1], ' '.join(stavek), vrstica[4]])  # doc-ent-id, stavek-from-before,  sentiment
-        else:
-            test_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, stavek-from-before,  sentiment
+        for stavek in vrstica[6]:
+            test_new.append([vrstica[0] + "-" + vrstica[1], stavek, vrstica[4]])  # doc-ent-id, sentence,  sentiment
     test_new = pd.DataFrame(test_new)
 
     return train_new, test_new
