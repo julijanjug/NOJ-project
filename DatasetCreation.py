@@ -55,11 +55,33 @@ def GetCorrectSentance(allSentances, characterLocation):
         if sentance[0][0] <= characterLocation <= sentance[0][1]:
             return sentance[1]
 
+def GetPositiveAndNegativeWords():
+    negative = set()
+    positive = set()
+
+    for file in glob.glob("Negative_positive/*.txt"):
+        with open(file, encoding="utf-8") as f:
+            if "negative" in file:
+                for line in f:
+                    line = line.strip()
+                    negative.add(line)
+                    negative.add(lemmatizer.lemmatize(line))
+            else:
+                for line in f:
+                    line = line.strip()
+                    positive.add(line)
+                    positive.add(lemmatizer.lemmatize(line))
+
+    return positive, negative
+
+
 lemmatizer = Lemmatizer(dictionary=lemmagen.DICTIONARY_SLOVENE)
 stop_words = set(stopwords.words('slovene'))
 
-file1 = open("data/data_v3.txt", "w")
-allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before", "Sentances"])
+positiveWords, negativeWords = GetPositiveAndNegativeWords()
+
+file1 = open("data/data_v4.txt", "w")
+allData = np.array(["File_ID", "Entity_ID", "Entity_type", "Entities", "Sentiment", "Words_before", "Words_before_sentiments", "Sentances"])
 file1.write(np.array2string(allData) + "\n")
 
 
@@ -162,7 +184,31 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
                         wordsBack.pop(0)
 
         for key in entitiesInFile.keys():
-            npArray = np.array([entitiesInFile[key][0], entitiesInFile[key][1], entitiesInFile[key][2], list(entitiesInFile[key][3]), entitiesInFile[key][4], entitiesInFile[key][5], entitiesInFile[key][6]])
+            words_before_cleaned = []
+            words_before_sentiments = []
+
+            for words in entitiesInFile[key][5]:
+                words_sentiments = []
+                words_cleaned = []
+
+                for word in words:
+                    if word not in stop_words:
+                        word = lemmatizer.lemmatize(word)
+                        words_cleaned.append(word)
+
+                        if word in positiveWords:
+                            words_sentiments.append(1)
+                        elif word in negativeWords:
+                            words_sentiments.append(2)
+                        else:
+                            words_sentiments.append(0)
+
+                if len(words_sentiments) > 0:
+                    words_before_sentiments.append(words_sentiments)
+                    words_before_cleaned.append(words_cleaned)
+
+
+            npArray = np.array([entitiesInFile[key][0], entitiesInFile[key][1], entitiesInFile[key][2], list(entitiesInFile[key][3]), entitiesInFile[key][4], words_before_cleaned, words_before_sentiments, entitiesInFile[key][6]])
             allData = np.vstack((allData, npArray))
             #print([entitiesInFile[key][0], entitiesInFile[key][1], list(entitiesInFile[key][2])])
             file1.write(np.array2string(npArray, separator=',').replace('\n', '') + "\n")
@@ -170,6 +216,6 @@ for file in glob.glob("SentiCoref_1.0/*.tsv"):
         #print()
         #print(allData.shape)
 
-np.save('data/data_v3.npy', allData)
+np.save('data/data_v4.npy', allData)
 
 file1.close()

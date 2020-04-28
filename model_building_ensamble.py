@@ -18,6 +18,8 @@ from sklearn.utils import resample
 #This file processes data that has formated words before as list of lists and makes elmo vector for each sentence.
 # Then predists every sentence and takes the most frequent prediction
 
+NAME = "v4_Jaka_all"
+
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
 print("done")
@@ -78,7 +80,7 @@ def upsample_minority(df):
 
     df_minority_upsampled = resample(df_minority,
                                      replace=True,  # sample with replacement
-                                     n_samples=len(df_majority),  # to match majority class
+                                     n_samples=int(len(df_majority)/2),  # to match majority class
                                      random_state=42)  # reproducible results
 
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
@@ -90,28 +92,43 @@ def make_elmo_embeddings(train, test):
     list_train = [train[i:i+100] for i in range(0,train.shape[0],100)]
     list_test = [test[i:i+100] for i in range(0,test.shape[0],100)]
     # Extract ELMo embeddings
-    elmo_train = [elmo_vectors(x[1]) for x in list_train]
-    elmo_test = [elmo_vectors(x[1]) for x in list_test]
+
+    elmo_train = []
+    list_train_len = len(list_train)
+
+    for i, x in enumerate(list_train):
+        elmo_train = elmo_vectors(x[1])
+        print(i, "/", list_train_len)
+
+
+    elmo_test = []
+    list_test_len = len(list_test)
+
+    for i, x in enumerate(list_test):
+        elmo_test = elmo_vectors(x[1])
+        print(i, "/", list_test_len)
+
+
     #join them back together
     elmo_train_new = np.concatenate(elmo_train, axis = 0)
     elmo_test_new = np.concatenate(elmo_test, axis = 0)
     print("done")
 
     # save elmo_train_new
-    pickle_out = open("elmo_embeddings/elmo_train_v4_Jaka.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_train_" + NAME + ".pickle", "wb")
     pickle.dump(elmo_train_new, pickle_out)
     pickle_out.close()
     # save elmo_test_new
-    pickle_out = open("elmo_embeddings/elmo_test_v4_Jaka.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_test_" + NAME + ".pickle", "wb")
     pickle.dump(elmo_test_new, pickle_out)
     pickle_out.close()
 
 def load_elmo_embeddings():
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_train_v4_Jaka.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_train_" + NAME + ".pickle", "rb")
     elmo_train_new = pickle.load(pickle_in)
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_test_v4_Jaka.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_test_" + NAME + ".pickle", "rb")
     elmo_test_new = pickle.load(pickle_in)
     return elmo_train_new, elmo_test_new
 
