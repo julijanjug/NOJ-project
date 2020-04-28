@@ -19,6 +19,8 @@ from sklearn.utils import resample
 # Then predists every sentence and takes the most frequent prediction
 #toooo slow...
 
+NAME = "v4_Jaka_all"
+
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
 print("done")
@@ -62,6 +64,7 @@ def load_preprocess_data(limit=None):
         for stavek in vrstica[6]:
                 train_new.append([vrstica[0]+"-"+vrstica[1], stavek, vrstica[4]]) #doc-ent-id, sentence,  sentiment
     train_new = pd.DataFrame(train_new)
+
     test_new = [] #list of rows
     for i, vrstica in test.iterrows():
         for stavek in vrstica[6]:
@@ -78,7 +81,7 @@ def upsample_minority(df):
 
     df_minority_upsampled = resample(df_minority,
                                      replace=True,  # sample with replacement
-                                     n_samples=len(df_majority),  # to match majority class
+                                     n_samples=int(len(df_majority)/2),  # to match majority class
                                      random_state=42)  # reproducible results
 
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
@@ -90,8 +93,23 @@ def make_elmo_embeddings(train, test):
     list_train = [train[i:i+100] for i in range(0,train.shape[0],100)]
     list_test = [test[i:i+100] for i in range(0,test.shape[0],100)]
     # Extract ELMo embeddings
-    elmo_train = [elmo_vectors(x[1]) for x in list_train]
-    elmo_test = [elmo_vectors(x[1]) for x in list_test]
+
+    elmo_train = []
+    list_train_len = len(list_train)
+
+    for i, x in enumerate(list_train):
+        elmo_train = elmo_vectors(x[1])
+        print(i, "/", list_train_len)
+
+
+    elmo_test = []
+    list_test_len = len(list_test)
+
+    for i, x in enumerate(list_test):
+        elmo_test = elmo_vectors(x[1])
+        print(i, "/", list_test_len)
+
+
     #join them back together
     elmo_train_new = np.concatenate(elmo_train, axis = 0)
     elmo_test_new = np.concatenate(elmo_test, axis = 0)
