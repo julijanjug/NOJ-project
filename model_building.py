@@ -158,12 +158,12 @@ def fit_log_reg(elmo_train_new, train, elmo_test_new, test):
 #-------MAIN------
 train, test = load_preprocess_data()
 
-# upsample minority class in train dataset
 train = upsample_minority(train)
 print(train[4].value_counts(normalize=True))
 
-make_elmo_embeddings(train, test)
+# make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
+
 fit_log_reg(elmo_train_new, train, elmo_test_new, test)
 
 
