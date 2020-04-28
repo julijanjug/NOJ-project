@@ -13,19 +13,30 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, recall_score, roc_auc_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import resample
+from nltk.corpus import state_union, stopwords
+import lemmagen.lemmatizer
+from lemmagen.lemmatizer import Lemmatizer
 
-#naredi elmo vector za words_before združene z presledki kr za vse stavke ki so povezani s to entitetio en vector
-
+#naredi elmo vector za words_before združene z presledki (lematizirane in odstranjeni stop wordi, upsampled
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
 print("done")
 
+lemmatizer = Lemmatizer(dictionary=lemmagen.DICTIONARY_SLOVENE)
+stop_words = set(stopwords.words('slovene'))
+
 def elmo_vectors(x):
     x = x.values
-    x = [' '.join(i) for i in x]
-    print(x)
-    embeddings = elmo(x, signature="default", as_dict=True)["elmo"]
-
+    x_new = []
+    for i in x: #leamtiziram in odstranim stop worde
+        new_row = []
+        for s in i:
+            if s not in stop_words:
+                w = lemmatizer.lemmatize(s)
+                new_row.append(w)
+        x_new.append(" ".join(new_row))
+    # x = [' '.join(i) for i in x]
+    embeddings = elmo(x_new, signature="default", as_dict=True)["elmo"]
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         sess.run(tf.tables_initializer())
@@ -66,28 +77,36 @@ def make_elmo_embeddings(train, test):
     list_train = [train[i:i+100] for i in range(0,train.shape[0],100)]
     list_test = [test[i:i+100] for i in range(0,test.shape[0],100)]
     # Extract ELMo embeddings
-    elmo_train = [elmo_vectors(x[5]) for x in list_train]
-    elmo_test = [elmo_vectors(x[5]) for x in list_test]
+    elmo_train = []
+    elmo_test = []
+    for i in range(len(list_train)):
+        print("{}/{}".format(i, len(list_train)))
+        elmo_train.append(elmo_vectors(list_train[i][5]))
+    for i in range(len(list_test)):
+        print("{}/{}".format(i, len(list_test)))
+        elmo_test.append(elmo_vectors(list_test[i][5]))
+    # elmo_train = [elmo_vectors(x[5]) for x in list_train]
+    # elmo_test = [elmo_vectors(x[5]) for x in list_test]
     #join them back together
     elmo_train_new = np.concatenate(elmo_train, axis = 0)
     elmo_test_new = np.concatenate(elmo_test, axis = 0)
     print("done")
 
     # save elmo_train_new
-    pickle_out = open("elmo_embeddings/elmo_train_upsampled.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_train_5words_lematized.pickle", "wb")
     pickle.dump(elmo_train_new, pickle_out)
     pickle_out.close()
     # save elmo_test_new
-    pickle_out = open("elmo_embeddings/elmo_test_upsampled.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_test_5words_lematized.pickle", "wb")
     pickle.dump(elmo_test_new, pickle_out)
     pickle_out.close()
 
 def load_elmo_embeddings():
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_train_upsampled.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_train_5words_lematized.pickle", "rb")
     elmo_train_new = pickle.load(pickle_in)
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_test_upsampled.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_test_5words_lematized.pickle", "rb")
     elmo_test_new = pickle.load(pickle_in)
     return elmo_train_new, elmo_test_new
 
@@ -99,7 +118,7 @@ def upsample_minority(df):
 
     df_minority_upsampled = resample(df_minority,
                                      replace=True,  # sample with replacement
-                                     n_samples=len(df_majority),  # to match majority class
+                                     n_samples=int(len(df_majority)/2),  # to match majority class
                                      random_state=42)  # reproducible results
 
     df_upsampled = pd.concat([df_majority, df_minority_upsampled])
@@ -137,13 +156,13 @@ def fit_log_reg(elmo_train_new, train, elmo_test_new, test):
     print(confusion_matrix(test[4], preds, labels))
 
 #-------MAIN------
-train, test = load_preprocess_data(800)
+train, test = load_preprocess_data()
 
 # upsample minority class in train dataset
 train = upsample_minority(train)
 print(train[4].value_counts(normalize=True))
 
-# make_elmo_embeddings(train, test)
+make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 fit_log_reg(elmo_train_new, train, elmo_test_new, test)
 

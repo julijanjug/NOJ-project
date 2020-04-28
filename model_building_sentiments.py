@@ -1,0 +1,1 @@
+#converts words before to their respective sentiment(0,1,2) and learns on that vectors

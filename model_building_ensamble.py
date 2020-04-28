@@ -17,6 +17,7 @@ from sklearn.utils import resample
 
 #This file processes data that has formated words before as list of lists and makes elmo vector for each sentence.
 # Then predists every sentence and takes the most frequent prediction
+#toooo slow...
 
 print("importing elmo")
 elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=True)
@@ -97,20 +98,20 @@ def make_elmo_embeddings(train, test):
     print("done")
 
     # save elmo_train_new
-    pickle_out = open("elmo_embeddings/elmo_train_v3.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_train_v3_test.pickle", "wb")
     pickle.dump(elmo_train_new, pickle_out)
     pickle_out.close()
     # save elmo_test_new
-    pickle_out = open("elmo_embeddings/elmo_test_v3.pickle", "wb")
+    pickle_out = open("elmo_embeddings/elmo_test_v3_test.pickle", "wb")
     pickle.dump(elmo_test_new, pickle_out)
     pickle_out.close()
 
 def load_elmo_embeddings():
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_train_v3.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_train_v3_test.pickle", "rb")
     elmo_train_new = pickle.load(pickle_in)
     # load elmo_train_new
-    pickle_in = open("elmo_embeddings/elmo_test_v3.pickle", "rb")
+    pickle_in = open("elmo_embeddings/elmo_test_v3_test.pickle", "rb")
     elmo_test_new = pickle.load(pickle_in)
     return elmo_train_new, elmo_test_new
 
@@ -173,7 +174,7 @@ train = upsample_minority(train)
 print(train[2].value_counts(normalize=True))
 
 #makeelmo embedings
-make_elmo_embeddings(train, test)
+# make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 
 #fit models
