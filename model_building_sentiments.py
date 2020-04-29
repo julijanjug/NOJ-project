@@ -4,7 +4,9 @@ import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, recall_score, roc_auc_score
 from sklearn.ensemble import RandomForestClassifier
@@ -19,6 +21,11 @@ def load_preprocess_data(limit=None):
     data = data[data[:,4] != None]  #removing None sentiments
     data[:,4] = np.where(data[:,4] == '5', '4', data[:,4]) #change class 5->4
     data[:,4] = np.where(data[:,4] == '1', '2', data[:,4]) #change class 1->2
+    # data[:,4] = np.where(data[:,4] == '2', '1', data[:,4]) #change class 1->2
+    # data[:,4] = np.where(data[:,4] == '4', '1', data[:,4]) #change class 1->2
+    # data[:,4] = np.where(data[:,4] == '5', '1', data[:,4]) #change class 1->2
+    # data[:,4] = np.where(data[:,4] == '3', '0', data[:,4]) #change class 1->2
+
     data = pd.DataFrame(data)
 
     if limit != None:
@@ -75,15 +82,13 @@ def fit_model(train, test):
     # make predictions on test set
     preds_test = lreg.predict(test_x)
     print("F1 test: ", f1_score(test[4], preds_test, average='micro'))
-
     # test accuracy
     print("CA: ", accuracy_score(test[4], preds_test))
-
     # recall and ROC area
     print('Recall score: {}'.format(recall_score(test[4], preds_test, average='micro')))
-
     # confusion matrix
     labels = ['2', '3', '4']
+    # labels = ['0', '1']
     print(confusion_matrix(test[4], preds_test, labels))
 
     # training random forest
@@ -92,17 +97,35 @@ def fit_model(train, test):
     rand_forest.fit(train_x, train[4])
     preds = rand_forest.predict(test_x)
     print("Random Forest Classification Score: ", rand_forest.score(test_x, test[4]))
-    # confusion matrix
-    labels = ['2', '3', '4']
     print(confusion_matrix(test[4], preds, labels))
 
+    print("KNN traiing")
+    knn = KNeighborsClassifier(n_neighbors=20)
+    knn.fit(train_x, train[4])
+    preds = knn.predict(test_x)
+    print("KNN Classification Score: ", knn.score(test_x, test[4]))
+    print(confusion_matrix(test[4], preds, labels))
+
+    print("CNN training")
+    nn = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(578, 100, 50), random_state=1)
+    nn.fit(train_x, train[4])
+    preds = nn.predict(test_x)
+    print("NN Classification Score: ", nn.score(test_x, test[4]))
+    print(confusion_matrix(test[4], preds, labels))
+
+
+    nn = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(10, 10), random_state=1)
+    nn.fit(train_x, train[4])
+    preds = nn.predict(test_x)
+    print("NN Classification Score: ", nn.score(test_x, test[4]))
+    # confusion matrix
+    print(confusion_matrix(test[4], preds, labels))
 
 #-------MAIN------
 train, test = load_preprocess_data()
 
 # upsample minority class in train dataset
 # train = upsample_minority(train)
-print(train[4].value_counts(normalize=True))
 
 #fit the model
 fit_model(train, test)
