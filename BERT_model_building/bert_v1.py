@@ -9,7 +9,21 @@ from transformers import (TFBertForSequenceClassification, BertTokenizer)
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
+print(f"Tensorflow version: {tf.__version__}")
 
+# Restrict TensorFlow to only allocate 4GBs of memory on the first GPU
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+  try:
+    tf.config.experimental.set_virtual_device_configuration(
+        gpus[0],
+        [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=4096)])
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(f"The system contains '{len(gpus)}' Physical GPUs and '{len(logical_gpus)}' Logical GPUs")
+  except RuntimeError as e:
+    print(e)
+else:
+    print(f"Your system does not contain a GPU that could be used by Tensorflow!")
 
 #read data
 def load_preprocess_data(limit=None):
