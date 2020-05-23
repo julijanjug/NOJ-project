@@ -13,3 +13,24 @@ b) n okoliških besed ob entiteti (enako besed pred in za entiteto: več besed p
 Za vectorizacijo bi uporabila word2vec in za klasificiralaposamezne stavke ali dele stavkov in določila njihov sentiment. Te klasifikacije pa nato nekako združila (s povprečenjem, ali uteževanjem). Sentimente bi pridobila s pomočjo različnih metod strojnega učenja (nevronske mreže, klasične metode).
 
 Problem, ki sva ga opazila pri podatkih je, da so podatki zelo neuravnoteženi. Podatkovna množica vsebuje 14,572 sentimentnih označb, od katerih je večina (~74%) nevtralnih, nekaj (~24%) negaitvih in pozitivnih in zelo malo (<1%) zelo negativnih oz. zelo pozitivnih. Ta problem mova poizkusila rešiti z utežitvijo (zelo) negativnih/pozitivnih sentimenov, ali napovedovanjem le nevtralnih, pozitivnih in negativnih sentimentov, pri čemer bi zelo negaitve/pozitivne združila z negativinimi/pozitivnimi.
+
+
+# Code with which you can test the results can be found in the folder CodeToTest.
+
+## Libraries used:
+-numpy  
+-nltk  
+-lemmagen
+
+## In there you will find:
+-DatasetCreation.py: In it we create our initial preprocessed data set from SentiCoref 1.0 dataset. There we parse
+Entities and its Sentiment and combine them with 5 words that are found before the entity and sentance in with the word
+is found. Stop words are then removed and left words are lemmatized. For each of the 5 words found we also set its
+sentimets  with the help of files found in "Negative_positive" folder.  
+-WordArrayCreation.py: Uses preprocessed data set to create a huge array with all rows corresponding to 5 words found
+before entity and columns corresponding to words. The array is then filled with 1s if the word is one of the 5 words
+before the entity and 0s if it's not. The last column is the sentiment for the entity. (cirrently is set to only create
+an array of 100 entities)  
+-wordArray_v1_extra_small.npy: File created with WordArrayCreation.py  (we couldn't upload the 
+full dataset because of Github limitations)
+-WordArrayLearning.py: Results for wordArray_v1.npy data set
