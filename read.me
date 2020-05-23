@@ -1,0 +1,18 @@
+Code with which you can test the results can be found in the folder CodeToTest.
+
+Libraries used:
+-numpy
+-nltk
+-lemmagen
+
+In there you will find:
+-DatasetCreation.py: In it we create our initial preprocessed data set from SentiCoref 1.0 dataset. There we parse
+Entities and its Sentiment and combine them with 5 words that are found before the entity and sentance in with the word
+is found. Stop words are then removed and left words are lemmatized. For each of the 5 words found we also set its
+sentimets  with the help of files found in "Negative_positive" folder.
+-WordArrayCreation.py: Uses preprocessed data set to create a huge array with all rows corresponding to 5 words found
+before entity and columns corresponding to words. The array is then filled with 1s if the word is one of the 5 words
+before the entity and 0s if it's not. The last column is the sentiment for the entity. (cirrently is set to only create
+an array of 100 entities)
+-wordArray_v1.npy: File created with WordArrayCreation.py
+-WordArrayLearning.py: Results for wordArray_v1.npy data set
