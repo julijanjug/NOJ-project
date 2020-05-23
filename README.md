@@ -32,5 +32,5 @@ before entity and columns corresponding to words. The array is then filled with 
 before the entity and 0s if it's not. The last column is the sentiment for the entity. (cirrently is set to only create
 an array of 100 entities)  
 -wordArray_v1_extra_small.npy: File created with WordArrayCreation.py  (we couldn't upload the 
-full dataset because of Github limitations)
+full dataset because of Github limitations)  
 -WordArrayLearning.py: Results for wordArray_v1.npy data set
