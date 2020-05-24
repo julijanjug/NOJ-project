@@ -62,7 +62,7 @@ def load_preprocess_data(limit=None):
     return X_train, y_train, X_test, y_test, X_val, y_val
 
 #make test, train, val sets
-X_train, y_train, X_test, y_test, X_val, y_val = load_preprocess_data()
+X_train, y_train, X_test, y_test, X_val, y_val = load_preprocess_data(500)
 
 #load the bert pretrained moed and tokenizer
 bert_model = TFBertForSequenceClassification.from_pretrained("bert-base-cased")
@@ -106,9 +106,9 @@ def example_to_features(input_ids,attention_masks,token_type_ids,y):
           "attention_mask": attention_masks,
           "token_type_ids": token_type_ids},y
 
-train_ds = tf.data.Dataset.from_tensor_slices((X_train_input[0],X_train_input[1],X_train_input[2],y_train)).map(example_to_features).shuffle(100).batch(12).repeat(5)
-val_ds = tf.data.Dataset.from_tensor_slices((X_val_input[0],X_val_input[1],X_val_input[2],y_val)).map(example_to_features).batch(12)
-test_ds = tf.data.Dataset.from_tensor_slices((X_test_input[0],X_test_input[1],X_test_input[2],y_test)).map(example_to_features).batch(12)
+train_ds = tf.data.Dataset.from_tensor_slices((X_train_input[0], X_train_input[1],X_train_input[2],y_train)).map(example_to_features).shuffle(100).batch(24).repeat(5)
+val_ds = tf.data.Dataset.from_tensor_slices((X_val_input[0], X_val_input[1],X_val_input[2],y_val)).map(example_to_features).batch(24)
+test_ds = tf.data.Dataset.from_tensor_slices((X_test_input[0], X_test_input[1],X_test_input[2],y_test)).map(example_to_features).batch(24)
 
 #prepare the model
 optimizer = tf.keras.optimizers.Adam(learning_rate=3e-5, epsilon=1e-08, clipnorm=1.0)
@@ -117,7 +117,7 @@ metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
 bert_model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
 
 print("Fine-tuning BERT on dataset")
-bert_history = bert_model.fit(train_ds, epochs=10, validation_data=val_ds)
+bert_history = bert_model.fit(train_ds, epochs=3, validation_data=val_ds)
 
 #results aftera a few epochs
 results_true = test_ds.unbatch()
@@ -127,8 +127,8 @@ print(results_true)
 #predictions for the test
 results = bert_model.predict(test_ds)
 print("Model predictions:")
-for i in range(0,15):
-    print(f"\t {results[0+i*128]}")
+# for i in range(0,15):
+#     print(f"\t {results[0+i*128]}")
 
 results_predicted = np.argmax(results, axis=1)
 

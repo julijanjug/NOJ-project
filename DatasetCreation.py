@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import nltk
 from nltk.corpus import state_union, stopwords
-from nltk.tokenize import PunktSentenceTokenizer, sent_tokenize
+from nltk.tokenize import word_tokenize
 import lemmagen.lemmatizer
 from lemmagen.lemmatizer import Lemmatizer
 
