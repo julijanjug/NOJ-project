@@ -29,7 +29,7 @@ All code for data preprocessing and model building is located in folder CodeToTe
 -sqlite3  
 -xx_ent_wiki_sm  
 
-## In there you will find:
+## Scripts:
 - **DatasetCreation.py**: In it we create our initial preprocessed data set from SentiCoref 1.0 dataset. There we parse
 Entities and its Sentiment and combine them with 5 words that are found before the entity and sentance in with the word
 is found. Stop words are then removed and left words are lemmatized. For each of the 5 words found we also set its
@@ -41,6 +41,6 @@ an array of 100 entities)
 - **wordArray_v1_extra_small.npy**: File created with WordArrayCreation.py  (we couldn't upload the 
 full dataset because of Github limitations)  
 - **WordArrayLearning.py**: Results for wordArray_v1.npy data set
-- **build_index_document.py, build_index_paragraph.py, build_index_sentence.py**: Python scripts for building indexes using data from SentiNews corpus on document, paragraph and sentence level.
+- **build_index_document.py, build_index_paragraph.py, build_index_sentence.py**: Python scripts for building indexes using data from SentiNews corpus on document, paragraph and sentence level. The output files are saved in SentiNews directory.
 - **model_all_2class.py, model_all_3class.py**: Scripts for building the train and test data sets using SentiNews, ELMo and KSS features. The output is classification accuracy and F-score for classifing 2 or 3 target classes using majority classifier, RandomForest and LogisticRegression models.
 - **elmo_model_3class.py**: Script for building the train and test data sets using only ELMo embeddings. The output is classification accuracy and F-score for classifing 2 or 3 target classes using majority classifier, RandomForest and LogisticRegression models.
