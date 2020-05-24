@@ -1,5 +1,5 @@
 # ONJ: Aspect-based sentiment analysis
-Avtorja: Julijan Jug, Jaka Jenko
+Authors: Julijan Jug, Jaka Jenko
 
 ## Introduction
 The project analyses different classification models and feature sets for aspect-based sentiment prediction. Previous research has shown that aspect-based sentiment prediction is a very hard problem, which is magnified due to the peculiarities of the Slovene language.
