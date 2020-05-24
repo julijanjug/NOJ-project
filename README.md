@@ -1,18 +1,15 @@
 # ONJ: Aspect-based sentiment analysis
-Avtorja: Julijan Jug, Jaka Jenko
+Authors: Julijan Jug, Jaka Jenko
 
 ## Introduction
-Za seminarsko nalogo sva izbrala temo "Aspect-based sentiment analysis". Najprej sva pogledala podan nabor podatkov, ki jih boma uporabila ("Slovene corpus for aspect-based sentiment analysis - SentiCoref 1.0", url:https://www.clarin.si/repository/xmlui/handle/11356/1285) in pregledala njegovo strukturo in vsebino. Ugotovila sva, da so podatki že ustrzno anotirani in imajo označene entitete ter koreference. V tej seminarski nali se boma osredotočila na samo na del klasifikacije sentimenta posamznih entitet.
+The project analyses different classification models and feature sets for aspect-based sentiment prediction. Previous research has shown that aspect-based sentiment prediction is a very hard problem, which is magnified due to the peculiarities of the Slovene language.
+The experiments were conducted using data from SentiCoref 1.0. The data set was prepossessed by the extraction of entities, corresponding sentiments, and the surrounding words. the words were lemmatized and cleared of stop words. Additional data with more examples of how the entities are used was also added with the help of SentiNews corpus and Slovene sentiment lexicon.
+Baseline results show a slight improvement over the majority class with 0.65 classification accuracy and the F-score of 0.64. Better results were obtained with the use of extended data (SentiNews) and the use of the ELMo training model with 0.75 classification accuracy and the F-score of 0.70.
+Future work would use the combination of multiple used approaches and classification of first into two classes neutral and non-neutral and then categorize the non-neutral class in to positive and negative sentiments to improve the classification model performance.
 
-## Initial ideas
-Predpostavila sva da so podatki o entitetah in koreferencah že podani in je torej ključna naloga klasifikacija sentimenta entitet.
-Prvotna ideja, preden sva pogledala obsotojče rešitve je bila, da za posamezno entiteto iz besedila pridobima:
-a) celotne stavke v katerih se entiteta pojavi oziroma na njih navezuje
-b) n okoliških besed ob entiteti (enako besed pred in za entiteto: več besed pred, manj besed po entiteti, saj so mogoče besede pred entiteto bolj pomembne; ali pa ravno obratno).
-
-Za vectorizacijo bi uporabila word2vec in za klasificiralaposamezne stavke ali dele stavkov in določila njihov sentiment. Te klasifikacije pa nato nekako združila (s povprečenjem, ali uteževanjem). Sentimente bi pridobila s pomočjo različnih metod strojnega učenja (nevronske mreže, klasične metode).
-
-Problem, ki sva ga opazila pri podatkih je, da so podatki zelo neuravnoteženi. Podatkovna množica vsebuje 14,572 sentimentnih označb, od katerih je večina (~74%) nevtralnih, nekaj (~24%) negaitvih in pozitivnih in zelo malo (<1%) zelo negativnih oz. zelo pozitivnih. Ta problem mova poizkusila rešiti z utežitvijo (zelo) negativnih/pozitivnih sentimenov, ali napovedovanjem le nevtralnih, pozitivnih in negativnih sentimentov, pri čemer bi zelo negaitve/pozitivne združila z negativinimi/pozitivnimi.
+Žitnik, Slavko, 2019, Slovene corpus for aspect-based sentiment analysis - SentiCoref 1.0, Slovenian language resource repository CLARIN.SI, http://hdl.handle.net/11356/1285.  
+Kadunc, Klemen and Robnik-Šikonja, Marko, 2017, Slovene sentiment lexicon KSS 1.1, Slovenian language resource repository CLARIN.SI, http://hdl.handle.net/11356/1097.  
+Bučar, Jože, 2017, Manually sentiment annotated Slovenian news corpus SentiNews 1.0, Slovenian language resource repository CLARIN.SI, http://hdl.handle.net/11356/1110.  
 
 
 # Running the project  
