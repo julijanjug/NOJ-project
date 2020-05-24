@@ -66,7 +66,7 @@ avg_sen_dict = dict()
 sd_sen_dict = dict()
 sen_dict = dict()
 
-file = "SentiNews_paragraph-level.txt"
+file = "../SentiNews/SentiNews_paragraph-level.txt"
 with open(file, encoding="utf-8") as f:
     header = f.readline()
 
@@ -112,4 +112,4 @@ for key, value in avg_sen_dict.items():
     new_row    = [key, avg_sen, avg_st_sen, mode_sen]
     result = np.vstack([result, new_row])
 
-np.save("parLevel_sentiment_v1.npy", result)
+np.save("../SentiNews/parLevel_sentiment_v1.npy", result)

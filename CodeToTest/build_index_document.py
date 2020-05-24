@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import glob
 from nltk.corpus import state_union, stopwords
 import lemmagen.lemmatizer
 from lemmagen.lemmatizer import Lemmatizer
@@ -67,7 +66,7 @@ avg_sen_dict = dict()
 sd_sen_dict = dict()
 sen_dict = dict()
 
-file = "SentiNews_document-level.txt"
+file = "../SentiNews/SentiNews_document-level.txt"
 with open(file, encoding="utf-8") as f:
     header = f.readline()
 
@@ -115,7 +114,7 @@ for key, value in avg_sen_dict.items():
     result = np.vstack([result, new_row])
 
 #stolpci: docid+entid, avg_sentiment, avg_sd_sentiment, mode_sentiment
-np.save("docLevel_sentiment_v1.npy", result)
+np.save("../SentiNews/docLevel_sentiment_v1.npy", result)
 
 # test = np.load("docLevel_sentiment_v1.npy", allow_pickle=True)
 # print(test)

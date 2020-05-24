@@ -1,9 +1,5 @@
 import pandas as pd
 import numpy as np
-import spacy
-from tqdm import tqdm
-import re
-import time
 import pickle
 import tensorflow_hub as hub
 import tensorflow.compat.v1 as tf

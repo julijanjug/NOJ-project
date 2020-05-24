@@ -45,7 +45,7 @@ def load_preprocess_data(limit=None):
         data = data[0:limit]
 
     #sentiment distribution
-    print(data[4].value_counts(normalize = True))
+    # print(data[4].value_counts(normalize = True))
 
     #train test split
     train, test = train_test_split(data, test_size=0.2, random_state=42)
@@ -142,20 +142,20 @@ def fit_model_for_polarity(elmo_train,  train, elmo_test, test):
 
     # log reg scores
     preds_test = lreg.predict(test_x)
-    print("F1 test: ", f1_score(test[4], preds_test, average='weighted'))
-    print("CA: ", accuracy_score(test[4], preds_test))
-    print('Recall score: {}'.format(recall_score(test[4], preds_test, average='weighted')))
+    print("LR F1: ", f1_score(test[4], preds_test, average='weighted'))
+    print("LR CA: ", accuracy_score(test[4], preds_test))
     labels = ['1', '0', '2']
-    print(confusion_matrix(test[4], preds_test, labels))
+    # print(confusion_matrix(test[4], preds_test, labels))
 
     # training random forest
     print("training random forest...")
     rand_forest = RandomForestClassifier(n_estimators=20, random_state=69)
     rand_forest.fit(train_x, train[4])
     preds = rand_forest.predict(test_x)
-    print("Random Forest CA: ", rand_forest.score(test_x, test[4]))
-    print("F1 test: ", f1_score(test[4], preds, average='weighted'))
-    print(confusion_matrix(test[4], preds, labels))
+    print("done")
+    print("RF CA: ", rand_forest.score(test_x, test[4]))
+    print("RF F1 : ", f1_score(test[4], preds, average='weighted'))
+    # print(confusion_matrix(test[4], preds, labels))
 
 def elmo_vectors(x):
     x = x.values
@@ -220,12 +220,12 @@ train, test = load_preprocess_data()
 
 # upsample minority class in train dataset
 # train = upsample_minority(train)
-print(train[4].value_counts(normalize=True))
-print(test[4].value_counts(normalize=True))
 
+#elmo embeddings
 # make_elmo_embeddings(train, test)
 elmo_train_new, elmo_test_new = load_elmo_embeddings()
 
+#train and output results
 fit_model_for_polarity(elmo_train_new, train,  elmo_test_new, test)
 
 
