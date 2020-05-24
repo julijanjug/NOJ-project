@@ -16,6 +16,7 @@ Bučar, Jože, 2017, Manually sentiment annotated Slovenian news corpus SentiNew
 All code for data preprocessing and model building is located in folder /code. The project requires Python 3.
 
 ## Required libraries:
+Libraries can be installed using pip or conda comands.  
 -numpy  
 -nltk  
 -lemmagen  
